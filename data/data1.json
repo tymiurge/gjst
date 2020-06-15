@@ -1,0 +1,70 @@
+{
+  "_000": "-----------------------------------------------------------------------------------------------------------",
+  "_001": "at first level, the json should contain <data> property as an embedded object, being actually the",
+  "_002": "template from which json is going to be generated",
+  "_003": "all rest properties at the same level with the <data>, are going to be treated by the template engine as",
+  "_004": "variables; inside the <data> structure, the variables can be referred with {{@variableName}} syntax",
+  "_005": "all properties prefixed with _ - like the <_1>, <_2> etc, etc, are going be ignored",
+  "_006": "-----------------------------------------------------------------------------------------------------------",
+  "_oo0": "referring syntax: @ and & symbols are used for variable references, $ - for referencing a built in function",
+  "_oo1": " - @<variable name> refers to a variable defined in the variables scope, or in function scope",
+  "_oo2": "   examples:",
+  "_oo3": "     - @os: refers to a value of <os> field defined in the variables scope",
+  "_oo4": "     - @data_body(x): {key: {{ @x }}}",
+  "_oo5": "         @data_body refers to a <data_body> field from variables scope,",
+  "_oo6": "         @x refers to the <x> variable defined as the <data_body>",
+  "_oo7": " - &os: refers to a value <os> field that has been defined somewhere above the current field",
+  "_oo8": " - $now(): refers to a built in function",
+  "_oo9": "-----------------------------------------------------------------------------------------------------------",
+  "_xx0": "extracting syntax",
+  "_xx9": "-----------------------------------------------------------------------------------------------------------",
+  "_007": "inside the <data>, to define a property value it's possible to call a function with {{$funcName()}} syntax",
+  "_008": "gjst supports the following functions:",
+  "_009": " - now() - returns unix timestamp in milliseconds",
+  "_010": " - timef(y, mm, d, h, mi, s, ms) - returns short date and time as a string of format 20130218T080910.123",
+  "_011": " - epoch(of) - returns unix timestamp in milliseconds",
+  "_012": "     - of: string in format of short date and time up to ms, i.e: 20130218T080910.123",
+  "_013": " - make(start, step, amount) - returns array of len equaled to <amount> where the first element is <start>,",
+  "_014": "     and each subsequent one is a sum of its predecessor and the <step>",
+  "_015": "     - start {number}: first element of array",
+  "_016": "     - step {number}: value to be added to each element's predecessor to get the element value",
+  "_017": "     - amount {number}: amount of elements to be generated",
+  "_018": "     example: $make(0, 1, 5) will generate [0, 1, 2, 3, 4]",
+  "_019": " - key(of) - returns random key of the <of> json object",
+  "_020": "     - of {object}: json object",
+  "_021": " - element(of) - returns random element of the <of> json array",
+  "_022": "     - of {array}: json array",
+  "_023": "-----------------------------------------------------------------------------------------------------------",
+
+  "_024": "-----------------------------------------------------------------------------------------------------------",
+  "_025": "VARIABLES SCOPE",
+  "os_def": {
+    "ios": ["iOS 9", "iOS 10", "iOS 11", "iOS 12", "iOS 13"],
+    "android": ["iOS 9", "iOS 10", "iOS 11", "iOS 12", "iOS 13"]
+  },
+
+  "gatheringInfoTimeStart": "20130218T080910.123",
+  "gatheringInfoTimeEnd": "20130219T080910.123",
+  "_026": "JSON TEMPLATE",
+  "data": {
+    "reportSendingTime": "{{ $now() }}",
+    "reportGathering": "{{ $epoch($timef(2013, 2, 18, 12, 45, 30, 500) }}",
+    "os": "{{ $key(@os_def) }}",
+    "version": "{{ $element(@os_def[&os]) }}"
+  },
+  "_027": "-----------------------------------------------------------------------------------------------------------",
+
+
+  "_028": "-----------------------------------------------------------------------------------------------------------",
+  "_029": "example of another template with variables scope, in this case data1 should be treated like data",
+  "_030": "this template will result in 120 json objects",
+  "reportTimeArray": "{{ $make($epoch(20130218T080910.123, 10, 120) }}",
+  "@data_body(x)": {
+    "reportSendingTime": "{{ $now() }}",
+    "reportGathering": "{{ @x }}"
+  },
+  "data1": "{{ $for(@reportTimeArray, el => @data_body(@el) }}"
+
+
+
+}
