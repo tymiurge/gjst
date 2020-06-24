@@ -1,0 +1,6 @@
+{
+  "scope": "variable scope",
+  "data": {
+    "property": "{{ @scope }}"
+  }
+}
